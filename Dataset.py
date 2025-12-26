@@ -1,24 +1,17 @@
 '''
-Created on Aug 8, 2016
-Processing datasets. 
-
-@author: Xiangnan He (xiangnanhe@gmail.com)
+Dataset.py
 '''
 import scipy.sparse as sp
 import numpy as np
+from collections import defaultdict
 
 class Dataset(object):
-    '''
-    classdocs
-    '''
-
     def __init__(self, path):
-        '''
-        Constructor
-        '''
         self.trainMatrix = self.load_rating_file_as_matrix(path + ".train.rating")
         self.testRatings = self.load_rating_file_as_list(path + ".test.rating")
         self.testNegatives = self.load_negative_file(path + ".test.negative")
+        self.usermeta = self.load_usermeta_file("user_meta")
+
         assert len(self.testRatings) == len(self.testNegatives)
         
         self.num_users, self.num_items = self.trainMatrix.shape
@@ -48,11 +41,6 @@ class Dataset(object):
         return negativeList
     
     def load_rating_file_as_matrix(self, filename):
-        '''
-        Read .rating file and Return dok matrix.
-        The first line of .rating file is: num_users\t num_items
-        '''
-        # Get number of users and items
         num_users, num_items = 0, 0
         with open(filename, "r") as f:
             line = f.readline()
@@ -62,7 +50,7 @@ class Dataset(object):
                 num_users = max(num_users, u)
                 num_items = max(num_items, i)
                 line = f.readline()
-        # Construct matrix
+        
         mat = sp.dok_matrix((num_users+1, num_items+1), dtype=np.float32)
         with open(filename, "r") as f:
             line = f.readline()
@@ -73,3 +61,16 @@ class Dataset(object):
                     mat[user, item] = 1.0
                 line = f.readline()    
         return mat
+    
+    def load_usermeta_file(self, filename):
+        metadict = defaultdict(list)
+        with open(filename, "r") as f:
+            line = f.readline()
+            while line != None and line != "":
+                arr = line.split("\t")
+                metalist = []
+                metalist.append(str(arr[1]))
+                metalist.append(list(arr[2]))
+                metadict[int(arr[0])] = metalist
+                line = f.readline()
+        return metadict
