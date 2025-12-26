@@ -7,7 +7,7 @@ from database import engine, get_db
 
 # 서버 시작 시 테이블 생성 (현실적으로는 Alembic 추천)
 models.Base.metadata.create_all(bind=engine)
-
+#test
 app = FastAPI()
 
 app.add_middleware(
