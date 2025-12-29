@@ -207,6 +207,8 @@ if __name__ == '__main__':
     num_negatives = 4
     learning_rate = 0.001
 
+    neumf_path = f"Pretrain/{dataset_name}_NeuMF.weights.h5"
+
     # ✅ 너가 말한대로: 사전학습 가중치는 Pretrain 폴더에 둠
     mf_pretrain = 'Pretrain/study_GMF.weights.h5'
     mlp_pretrain = 'Pretrain/study_MLP.weights.h5'
@@ -258,7 +260,16 @@ if __name__ == '__main__':
             hr, ndcg, loss = np.array(hits).mean(), np.array(ndcgs).mean(), hist.history['loss'][0]
             print('Iteration %d [%.1f s]: HR = %.4f, NDCG = %.4f, loss = %.4f [%.1f s]'
                   % (epoch, t2 - t1, hr, ndcg, loss, time() - t2))
-            if hr > best_hr:
-                best_hr, best_ndcg, best_iter = hr, ndcg, epoch
+            if hr > best_hr: best_hr, best_ndcg, best_iter = hr, ndcg, epoch
+
+    # ✅ 폴더 보장
+    if not os.path.exists("Pretrain"):
+        os.makedirs("Pretrain")
+
+    # ✅ NeuMF 가중치 저장 (test.py에서 load할 대상)
+    model.save_weights(neumf_path, overwrite=True)
+    print(f"✅ Saved best NeuMF weights -> {neumf_path}")
+
+                
 
     print("End. Best Iteration %d:  HR = %.4f, NDCG = %.4f. " % (best_iter, best_hr, best_ndcg))
