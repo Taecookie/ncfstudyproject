@@ -159,6 +159,9 @@ if __name__ == '__main__':
             if hr > best_hr:
                 best_hr = hr
                 if not os.path.exists('Pretrain'): os.makedirs('Pretrain')
+                 # ✅ (추가) 저장 전에 변수 생성/빌드 보장
+                #_= model([np.zeros((1, 1), dtype=np.int32),
+               #np.zeros((1, 1), dtype=np.int32)], training=False)    
                 model.save_weights(f'Pretrain/{dataset_name}_MLP.weights.h5', overwrite=True)
 
     print(f"End. Best HR = {best_hr:.4f}")

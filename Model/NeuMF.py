@@ -263,8 +263,8 @@ if __name__ == '__main__':
             if hr > best_hr: best_hr, best_ndcg, best_iter = hr, ndcg, epoch
 
     # ✅ 폴더 보장
-    if not os.path.exists("Pretrain"):
-        os.makedirs("Pretrain")
+    if not os.path.exists("./Pretrain"):
+        os.makedirs("./Pretrain")
 
     # ✅ NeuMF 가중치 저장 (test.py에서 load할 대상)
     model.save_weights(neumf_path, overwrite=True)
